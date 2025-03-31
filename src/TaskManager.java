@@ -1,75 +1,40 @@
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-class TaskManager {
-    private int idCounter = 1;
-    public Map<Integer, Task> tasks = new HashMap<>();
-    public Map<Integer, Epic> epics = new HashMap<>();
-    public Map<Integer, Subtask> subtasks = new HashMap<>();
-
-    public int generateId() {
-        return idCounter++;
-    }
+public class TaskManager {
+    private Map<Integer, Task> tasks = new HashMap<>();
+    private Map<Integer, Epic> epics = new HashMap<>();
+    private Map<Integer, Subtask> subtasks = new HashMap<>();
+    private int nextId = 1;
 
     public void addTask(Task task) {
+        task.id = nextId++;
         tasks.put(task.getId(), task);
     }
 
     public void addEpic(Epic epic) {
+        epic.id = nextId++;
         epics.put(epic.getId(), epic);
     }
 
     public void addSubtask(Subtask subtask) {
+        subtask.id = nextId++;
         subtasks.put(subtask.getId(), subtask);
-        Epic epic = epics.get(subtask.getEpicId());
-        if (epic != null) {
-            epic.addSubtask(subtask.getId());
-            updateEpicStatus(epic);
+
+        if (epics.containsKey(subtask.getEpicId())) {
+            epics.get(subtask.getEpicId()).addSubtask(subtask);
         }
     }
 
-    public void updateTask(Task task) {
-        tasks.put(task.getId(), task);
+    public Map<Integer, Task> getTasks() {
+        return tasks;
     }
 
-    public void updateSubtask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
-        updateEpicStatus(epics.get(subtask.getEpicId()));
+    public Map<Integer, Epic> getEpics() {
+        return epics;
     }
 
-    public void updateEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
-    }
-
-    private void updateEpicStatus(Epic epic) {
-        if (epic == null) return;
-
-        List<Integer> subtaskIds = epic.getSubtaskIds();
-        if (subtaskIds.isEmpty()) {
-            epic.setStatus(TaskStatus.NEW);
-            return;
-        }
-
-        boolean allDone = true;
-        boolean anyInProgress = false;
-
-        for (int subtaskId : subtaskIds) {
-            Subtask subtask = subtasks.get(subtaskId);
-            if (subtask != null) {
-                if (subtask.getStatus() != TaskStatus.DONE) {
-                    allDone = false;
-                }
-                if (subtask.getStatus() == TaskStatus.IN_PROGRESS) {
-                    anyInProgress = true;
-                }
-            }
-        }
-
-        if (allDone) {
-            epic.setStatus(TaskStatus.DONE);
-        } else if (anyInProgress) {
-            epic.setStatus(TaskStatus.IN_PROGRESS);
-        } else {
-            epic.setStatus(TaskStatus.NEW);
-        }
+    public Map<Integer, Subtask> getSubtasks() {
+        return subtasks;
     }
 }
