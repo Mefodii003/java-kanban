@@ -1,23 +1,29 @@
 public class Main {
     public static void main(String[] args) {
-        TaskManager manager = new TaskManager();
+        // Использование конкретной реализации TaskManager
+        TaskManager taskManager = new InMemoryTaskManager();
 
-        Task task1 = new Task(0, "Купить продукты", "Купить овощи и фрукты", TaskStatus.NEW);
-        Task task2 = new Task(0, "Помыть машину", "Помыть машину после поездки", TaskStatus.NEW);
-        manager.addTask(task1);
-        manager.addTask(task2);
+        // Создание задачи Epic
+        Task epic = new Epic("Epic Task", "Epic Description");
 
-        // Передаем описание для Epic
-        Epic epic = new Epic(0, "Переезд", "Переезд на новое место жительства");
-        manager.addEpic(epic);
+        // Добавление эпика в TaskManager
+        taskManager.addEpic((Epic) epic);
 
-        Subtask subtask1 = new Subtask(0, "Упаковать вещи", "Упаковать все вещи в коробки", TaskStatus.NEW, epic.getId());
-        Subtask subtask2 = new Subtask(0, "Заказать грузчиков", "Найти и заказать грузчиков для переезда", TaskStatus.NEW, epic.getId());
-        manager.addSubtask(subtask1);
-        manager.addSubtask(subtask2);
+        // Создание подзадачи Subtask
+        Subtask subtask = new Subtask("Subtask", "Subtask description", TaskStatus.NEW, 1);
 
-        System.out.println("Все задачи: " + manager.getTasks());
-        System.out.println("Все эпики: " + manager.getEpics());
-        System.out.println("Все подзадачи: " + manager.getSubtasks());
+        // Добавление подзадачи в TaskManager
+        taskManager.addSubtask(subtask);
+
+        // Пример получения задачи по id (чтобы добавить в историю)
+        taskManager.getTask(1);  // Это вызовет добавление задачи в историю
+        taskManager.getSubtask(1);  // Это также добавит подзадачу в историю
+        taskManager.getEpic(1);  // Это добавит эпик в историю
+
+        // Получение истории
+        System.out.println("История просмотров:");
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task);
+        }
     }
 }
