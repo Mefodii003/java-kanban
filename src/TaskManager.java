@@ -10,8 +10,4 @@ public interface TaskManager {
     Subtask getSubtask(int id);
 
     List<Task> getHistory();
-
-    void removeTask(int id);
-    void removeEpic(int id);
-    void removeSubtask(int id);
 }

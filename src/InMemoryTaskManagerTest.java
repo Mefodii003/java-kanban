@@ -46,7 +46,7 @@ public class InMemoryTaskManagerTest {
         Task task = new Task("Task", "Desc");
         manager.addTask(task);
         manager.getTask(task.getId());
-        manager.removeTask(task.getId());
+
 
         assertTrue(manager.getHistory().isEmpty());
     }
