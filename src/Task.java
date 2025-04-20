@@ -4,40 +4,48 @@ public class Task {
     private String description;
     private TaskStatus status;
 
-    public Task(String title, String description) {
+
+    public Task(String title, String description, TaskStatus status) {
         this.title = title;
         this.description = description;
-        this.status = TaskStatus.NEW;
+        this.status = status;
     }
 
     public int getId() {
         return id;
     }
 
+
     public void setId(int id) {
         this.id = id;
     }
+
 
     public String getTitle() {
         return title;
     }
 
+
     public String getDescription() {
         return description;
     }
+
 
     public TaskStatus getStatus() {
         return status;
     }
 
+
     public void setStatus(TaskStatus status) {
         this.status = status;
     }
 
+
     @Override
     public String toString() {
-        return id + "," + TaskType.TASK + "," + title + "," + status + "," + description;
+        return id + "," + title + "," + status + "," + description;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -46,6 +54,7 @@ public class Task {
         Task task = (Task) o;
         return id == task.id;
     }
+
 
     @Override
     public int hashCode() {

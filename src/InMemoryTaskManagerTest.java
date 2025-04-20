@@ -1,14 +1,14 @@
 import org.junit.jupiter.api.Test;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 
 public class InMemoryTaskManagerTest {
 
     @Test
     public void testAddAndGetTask() {
         TaskManager manager = new InMemoryTaskManager();
-        Task task = new Task("Test Task", "Desc");
-        manager.addTask(task);
+        Task task = new Task("Test Task", "Desc", TaskStatus.NEW); // Передаем статус
+        manager.createTask(task);
         Task retrieved = manager.getTask(task.getId());
 
         assertEquals(task, retrieved);
@@ -18,11 +18,11 @@ public class InMemoryTaskManagerTest {
     public void testAddEpicAndSubtaskUpdatesStatus() {
         TaskManager manager = new InMemoryTaskManager();
         Epic epic = new Epic("Epic", "Desc");
-        manager.addEpic(epic);
+        manager.createEpic(epic);
         Subtask sub1 = new Subtask("Sub1", "Desc", TaskStatus.NEW, epic.getId());
         Subtask sub2 = new Subtask("Sub2", "Desc", TaskStatus.DONE, epic.getId());
-        manager.addSubtask(sub1);
-        manager.addSubtask(sub2);
+        manager.createSubtask(sub1);
+        manager.createSubtask(sub2);
 
         Epic updated = manager.getEpic(epic.getId());
         assertEquals(TaskStatus.IN_PROGRESS, updated.getStatus());
@@ -31,8 +31,8 @@ public class InMemoryTaskManagerTest {
     @Test
     public void testHistoryWithoutDuplicates() {
         TaskManager manager = new InMemoryTaskManager();
-        Task task1 = new Task("T1", "D");
-        manager.addTask(task1);
+        Task task1 = new Task("T1", "D", TaskStatus.NEW);
+        manager.createTask(task1);
         manager.getTask(task1.getId());
         manager.getTask(task1.getId());
         List<Task> history = manager.getHistory();
@@ -43,11 +43,11 @@ public class InMemoryTaskManagerTest {
     @Test
     public void testRemoveAlsoRemovesFromHistory() {
         TaskManager manager = new InMemoryTaskManager();
-        Task task = new Task("Task", "Desc");
-        manager.addTask(task);
+        Task task = new Task("Task", "Desc", TaskStatus.NEW);
+        manager.createTask(task);
         manager.getTask(task.getId());
 
-
+        manager.deleteTask(task.getId());
         assertTrue(manager.getHistory().isEmpty());
     }
 }

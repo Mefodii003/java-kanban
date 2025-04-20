@@ -1,25 +1,25 @@
 public class Main {
     public static void main(String[] args) {
+        TaskManager taskManager = Managers.getDefault();
 
-        TaskManager taskManager = new InMemoryTaskManager();
-        Task epic = new Epic("Epic Task", "Epic Description");
+        // Создаем задачи с статусом NEW
+        Task task = new Task("Task 1", "Description of task", TaskStatus.NEW);
+        taskManager.createTask(task);
 
-        taskManager.addEpic((Epic) epic);
+        Epic epic = new Epic("Epic 1", "Description of epic");
+        taskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Subtask", "Subtask description", TaskStatus.NEW, 1);
+        Subtask subtask = new Subtask("Subtask 1", "Description of subtask", TaskStatus.NEW, epic.getId());
+        taskManager.createSubtask(subtask);
 
+        // Получаем задачи
+        Task retrievedTask = taskManager.getTask(task.getId());
+        Epic retrievedEpic = taskManager.getEpic(epic.getId());
+        Subtask retrievedSubtask = taskManager.getSubtask(subtask.getId());
 
-        taskManager.addSubtask(subtask);
-
-
-        taskManager.getTask(1);  // Это вызовет добавление задачи в историю
-        taskManager.getSubtask(1);  // Это также добавит подзадачу в историю
-        taskManager.getEpic(1);  // Это добавит эпик в историю
-
-        // Получение истории
-        System.out.println("История просмотров:");
-        for (Task task : taskManager.getHistory()) {
-            System.out.println(task);
-        }
+        // Выводим на экран
+        System.out.println("Retrieved Task: " + retrievedTask);
+        System.out.println("Retrieved Epic: " + retrievedEpic);
+        System.out.println("Retrieved Subtask: " + retrievedSubtask);
     }
 }

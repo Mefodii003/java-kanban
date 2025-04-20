@@ -1,48 +1,39 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class InMemoryHistoryManagerTest {
-    private HistoryManager historyManager;
 
-    @BeforeEach
-    public void setUp() {
-        historyManager = new InMemoryHistoryManager();
+    @Test
+    public void testAddAndGetTask() {
+        TaskManager manager = new InMemoryTaskManager();
+        Task task = new Task("Test Task", "Desc", TaskStatus.NEW); // Передаем статус
+        manager.createTask(task);
+        Task retrieved = manager.getTask(task.getId());
+
+        assertEquals(task, retrieved);
     }
 
     @Test
-    public void shouldAddTasksToHistory() {
-        Task task = new Task("Test task", "Description");
-        task.setId(1);
-        historyManager.add(task);
-        List<Task> history = historyManager.getHistory();
-        assertEquals(1, history.size());
-        assertEquals(task, history.get(0));
-    }
+    public void testHistoryWithoutDuplicates() {
+        TaskManager manager = new InMemoryTaskManager();
+        Task task1 = new Task("T1", "D", TaskStatus.NEW);
+        manager.createTask(task1);
+        manager.getTask(task1.getId());
+        manager.getTask(task1.getId());
+        List<Task> history = manager.getHistory();
 
-    @Test
-    public void shouldNotAddDuplicates() {
-        Task task = new Task("Test task", "Description");
-        task.setId(1);
-        historyManager.add(task);
-        historyManager.add(task);
-        List<Task> history = historyManager.getHistory();
         assertEquals(1, history.size());
     }
 
     @Test
-    public void shouldRemoveOldestIfHistoryIsFull() {
-        for (int i = 1; i <= 11; i++) {
-            Task task = new Task("Task " + i, "Description " + i);
-            task.setId(i);
-            historyManager.add(task);
-        }
+    public void testRemoveTaskFromHistory() {
+        TaskManager manager = new InMemoryTaskManager();
+        Task task = new Task("Task", "Desc", TaskStatus.NEW);
+        manager.createTask(task);
+        manager.getTask(task.getId());
 
-        List<Task> history = historyManager.getHistory();
-        assertEquals(10, history.size());
-        assertEquals(2, history.get(0).getId()); // Первый (id=1) должен быть удалён
+        manager.deleteTask(task.getId());
+        assertTrue(manager.getHistory().isEmpty());
     }
 }
