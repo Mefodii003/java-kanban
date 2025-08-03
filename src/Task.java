@@ -1,11 +1,11 @@
 public class Task {
     private int id;
-    private String title;
+    private String name;
     private String description;
     private TaskStatus status;
 
-    public Task(String title, String description, TaskStatus status) {
-        this.title = title;
+    public Task(String name, String description, TaskStatus status) {
+        this.name = name;
         this.description = description;
         this.status = status;
     }
@@ -18,8 +18,8 @@ public class Task {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
     public String getDescription() {
@@ -35,23 +35,22 @@ public class Task {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Task)) return false;
-        Task task = (Task) o;
-        return id == task.id;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Task)) return false;
+        Task other = (Task) obj;
+        return id == other.id;
     }
 
     @Override
     public int hashCode() {
         return Integer.hashCode(id);
     }
-
     @Override
     public String toString() {
         return "Task{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 '}';

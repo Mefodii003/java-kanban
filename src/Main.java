@@ -4,7 +4,7 @@ public class Main {
         TaskManager manager = new InMemoryTaskManager(historyManager);
 
         // создаем эпик
-        Epic epic = new Epic("Epic 1", "Description of epic 1", TaskStatus.NEW);
+        Epic epic = new Epic("Эпик 1", "Description of epic 1", TaskStatus.NEW);
         manager.createEpic(epic);  // теперь у эпика есть id
 
         int epicId = epic.getId();  // получаем id созданного эпика
