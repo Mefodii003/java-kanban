@@ -1,57 +1,65 @@
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
-    private final List<Subtask> subtasks = new ArrayList<>();
+    private final List<Integer> subtaskIds = new ArrayList<>();
 
-    public Epic(String name, String description, TaskStatus status) {
-        super(name, description, status);
+    public Epic(String name, String description) {
+        super(name, description, TaskStatus.NEW);
     }
 
-    public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
-        updateStatus();
+    public List<Integer> getSubtaskIds() {
+        return new ArrayList<>(subtaskIds);
     }
 
-    public void removeSubtask(Subtask subtask) {
-        subtasks.remove(subtask);
-        updateStatus();
+    public void addSubtask(int subtaskId) {
+        subtaskIds.add(subtaskId);
+    }
+
+    public void removeSubtask(int subtaskId) {
+        subtaskIds.remove((Integer) subtaskId);
     }
 
     public void clearSubtasks() {
-        subtasks.clear();
-        updateStatus();
+        subtaskIds.clear();
     }
 
-    public List<Subtask> getSubtasks() {
-        return new ArrayList<>(subtasks);
-    }
-
-    public void updateStatus() {
+    public void updateEpicData(List<Subtask> subtasks) {
         if (subtasks.isEmpty()) {
             setStatus(TaskStatus.NEW);
+            this.startTime = null;
+            this.duration = Duration.ZERO;
             return;
         }
 
         boolean allNew = true;
         boolean allDone = true;
 
-        for (Subtask subtask : subtasks) {
-            TaskStatus status = subtask.getStatus();
-            if (status != TaskStatus.NEW) {
-                allNew = false;
+        LocalDateTime earliest = null;
+        LocalDateTime latest = null;
+        Duration totalDuration = Duration.ZERO;
+
+        for (Subtask sub : subtasks) {
+            TaskStatus status = sub.getStatus();
+            if (status != TaskStatus.NEW) allNew = false;
+            if (status != TaskStatus.DONE) allDone = false;
+
+            if (sub.getStartTime() != null) {
+                if (earliest == null || sub.getStartTime().isBefore(earliest)) earliest = sub.getStartTime();
+                LocalDateTime subEnd = sub.getEndTime();
+                if (latest == null || (subEnd != null && subEnd.isAfter(latest))) latest = subEnd;
             }
-            if (status != TaskStatus.DONE) {
-                allDone = false;
-            }
+
+            if (sub.getDuration() != null) totalDuration = totalDuration.plus(sub.getDuration());
         }
 
-        if (allDone) {
-            setStatus(TaskStatus.DONE);
-        } else if (allNew) {
-            setStatus(TaskStatus.NEW);
-        } else {
-            setStatus(TaskStatus.IN_PROGRESS);
-        }
+        if (allDone) setStatus(TaskStatus.DONE);
+        else if (allNew) setStatus(TaskStatus.NEW);
+        else setStatus(TaskStatus.IN_PROGRESS);
+
+        this.startTime = earliest;
+        this.duration = totalDuration;
     }
 }

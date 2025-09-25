@@ -1,7 +1,6 @@
-id,type,name,status,description,epic
-1,TASK,Task 1,NEW,Description 1,
-2,TASK,Task 2,IN_PROGRESS,Description 2,
-3,EPIC,Epic 1,IN_PROGRESS,Epic Description,
-4,SUBTASK,Subtask 1,NEW,Subtask Desc,3
-5,SUBTASK,Subtask 2,DONE,Subtask Desc,3
+id,type,name,status,description,startTime,duration,epic
+1,TASK,Уборка,NEW,Убрать квартиру,2025-09-25T10:00,90,
+2,EPIC,Проект по Java,NEW,Сдать курсовую работу,,,
+3,SUBTASK,Написать код,NEW,Реализовать все классы,2025-09-25T13:00,180,2
+4,SUBTASK,Написать тесты,NEW,Проверить код,2025-09-25T16:00,120,2
 

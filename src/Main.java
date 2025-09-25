@@ -1,27 +1,47 @@
+import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Main {
     public static void main(String[] args) {
-        HistoryManager historyManager = new InMemoryHistoryManager();
-        TaskManager manager = new InMemoryTaskManager(historyManager);
+        File file = new File("tasks.csv");
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
 
-        // создаем эпик
-        Epic epic = new Epic("Эпик 1", "Description of epic 1", TaskStatus.NEW);
-        manager.createEpic(epic);  // теперь у эпика есть id
+        // Создаём обычную задачу
+        Task task1 = new Task("Покупка продуктов", "Купить продукты в магазине", TaskStatus.NEW);
+        task1.setDuration(Duration.ofMinutes(60));
+        task1.setStartTime(LocalDateTime.of(2025, 9, 25, 12, 0));
+        manager.createTask(task1);
 
-        int epicId = epic.getId();  // получаем id созданного эпика
+        // Создаём эпик
+        Epic epic1 = new Epic("Ремонт квартиры", "Сделать ремонт в гостиной");
+        manager.createEpic(epic1);
 
-        // создаем подзадачу с прав epicId
-        Subtask subtask = new Subtask("Subtask 1", "Description of subtask 1", TaskStatus.NEW, epicId);
-        manager.createSubtask(subtask);
+        // Создаём подзадачи
+        Subtask sub1 = new Subtask("Купить краску", "Выбрать и купить краску", TaskStatus.NEW, epic1.getId());
+        sub1.setDuration(Duration.ofMinutes(120));
+        sub1.setStartTime(LocalDateTime.of(2025, 9, 26, 9, 0));
+        manager.createSubtask(sub1);
 
-        // проверяем, что epicId у подзадачи установлен норм
-        System.out.println("Epic ID in Subtask: " + subtask.getEpicId());  // Должно вывести id эпика
+        Subtask sub2 = new Subtask("Покрасить стены", "Покрасить стены в гостиной", TaskStatus.NEW, epic1.getId());
+        sub2.setDuration(Duration.ofMinutes(180));
+        sub2.setStartTime(LocalDateTime.of(2025, 9, 26, 12, 0));
+        manager.createSubtask(sub2);
 
-        // получаем и выводим подзадачу из менеджера
-        Subtask retrievedSubtask = manager.getSubtask(subtask.getId());
-        System.out.println("Retrieved Subtask: " + retrievedSubtask);
+        // Обновляем эпик после добавления подзадач
+        epic1.updateEpicData(manager.getSubtasksOfEpic(epic1.getId()));
 
-        // получаем и выводим эпик
-        Epic retrievedEpic = manager.getEpic(epicId);
-        System.out.println("Retrieved Epic subtasks count: " + retrievedEpic.getSubtasks().size());
+        // Выводим всё в консоль
+        System.out.println("Все задачи:");
+        for (Task t : manager.getAllTasks()) System.out.println(t);
+
+        System.out.println("\nЭпики:");
+        for (Epic e : manager.getAllEpics()) System.out.println(e);
+
+        System.out.println("\nПодзадачи эпика:");
+        for (Subtask s : manager.getSubtasksOfEpic(epic1.getId())) System.out.println(s);
+
+        System.out.println("\nИстория:");
+        for (Task t : manager.getHistory()) System.out.println(t);
     }
 }
