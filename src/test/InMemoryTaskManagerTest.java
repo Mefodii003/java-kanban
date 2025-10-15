@@ -1,9 +1,25 @@
+package test;
+
+import manager.HistoryManager;
+import manager.InMemoryHistoryManager;
+import manager.InMemoryTaskManager;
+import manager.TaskManager;
+
+import model.Task;
+import model.Epic;
+import model.Subtask;
+import model.TaskStatus;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import model.Task;
+import model.Epic;
+import model.Subtask;
+import model.TaskStatus;
 public class InMemoryTaskManagerTest {
 
     @Test
