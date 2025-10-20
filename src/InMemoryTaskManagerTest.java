@@ -23,7 +23,7 @@ public class InMemoryTaskManagerTest {
         HistoryManager historyManager = new InMemoryHistoryManager();
         TaskManager manager = new InMemoryTaskManager(historyManager);
 
-        Epic epic = new Epic("Epic", "Desc", TaskStatus.NEW);
+        Epic epic = new Epic("Epic", "Desc");
         manager.createEpic(epic);
 
         Subtask sub1 = new Subtask("Sub1", "Desc", TaskStatus.NEW, epic.getId());

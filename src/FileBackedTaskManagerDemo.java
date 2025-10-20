@@ -1,47 +1,44 @@
 import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManagerDemo {
     public static void main(String[] args) {
-        try {
-            File file = new File("tasks.csv");
-            FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        File file = new File("tasks.csv");
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
 
-            // Создаём задачи
-            Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
-            Task task2 = new Task("Task 2", "Description 2", TaskStatus.IN_PROGRESS);
-            manager.createTask(task1);
-            manager.createTask(task2);
+        // Создание задач
+        Task task = new Task("Уборка", "Убрать квартиру", TaskStatus.NEW);
+        task.setDuration(Duration.ofMinutes(90));
+        task.setStartTime(LocalDateTime.of(2025, 9, 25, 10, 0));
+        manager.createTask(task);
 
-            // Создаём эпик и подзадачи
-            Epic epic = new Epic("Epic 1", "Epic Description", TaskStatus.NEW);
-            manager.createEpic(epic);
-            Subtask sub1 = new Subtask("Subtask 1", "Subtask Desc", TaskStatus.NEW, epic.getId());
-            Subtask sub2 = new Subtask("Subtask 2", "Subtask Desc", TaskStatus.DONE, epic.getId());
-            manager.createSubtask(sub1);
-            manager.createSubtask(sub2);
+        Epic epic = new Epic("Проект по Java", "Сдать курсовую работу");
+        manager.createEpic(epic);
 
-            // Просматриваем задачи для истории
-            manager.getTask(task1.getId());
-            manager.getEpic(epic.getId());
-            manager.getSubtask(sub1.getId());
+        Subtask subtask1 = new Subtask("Написать код", "Реализовать все классы", TaskStatus.NEW, epic.getId());
+        subtask1.setDuration(Duration.ofMinutes(180));
+        subtask1.setStartTime(LocalDateTime.of(2025, 9, 25, 13, 0));
+        manager.createSubtask(subtask1);
 
-            System.out.println("=== Исходный менеджер ===");
-            System.out.println("Задачи: " + manager.getAllTasks());
-            System.out.println("Эпики: " + manager.getAllEpics());
-            System.out.println("Подзадачи: " + manager.getAllSubtasks());
-            System.out.println("История: " + manager.getHistory());
+        Subtask subtask2 = new Subtask("Написать тесты", "Проверить код", TaskStatus.NEW, epic.getId());
+        subtask2.setDuration(Duration.ofMinutes(120));
+        subtask2.setStartTime(LocalDateTime.of(2025, 9, 25, 16, 0));
+        manager.createSubtask(subtask2);
 
-            // Загружаем новый менеджер из файла
-            FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
+        // Обновляем эпик, чтобы пересчитать статус и время
+        epic.updateEpicData(manager.getSubtasksOfEpic(epic.getId()));
 
-            System.out.println("\n=== Загруженный менеджер ===");
-            System.out.println("Задачи: " + loadedManager.getAllTasks());
-            System.out.println("Эпики: " + loadedManager.getAllEpics());
-            System.out.println("Подзадачи: " + loadedManager.getAllSubtasks());
-            System.out.println("История: " + loadedManager.getHistory());
+        // Демонстрация сохранения и загрузки
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        System.out.println("Загруженные задачи:");
+        for (Task t : loadedManager.getAllTasks()) System.out.println(t);
+
+        System.out.println("\nЗагруженные эпики:");
+        for (Epic e : loadedManager.getAllEpics()) System.out.println(e);
+
+        System.out.println("\nЗагруженные подзадачи эпика:");
+        for (Subtask s : loadedManager.getSubtasksOfEpic(epic.getId())) System.out.println(s);
     }
 }
