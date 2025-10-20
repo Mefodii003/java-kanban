@@ -1,12 +1,11 @@
 public class Task {
     private int id;
-    private String title;
+    private String name;
     private String description;
     private TaskStatus status;
 
-
-    public Task(String title, String description, TaskStatus status) {
-        this.title = title;
+    public Task(String name, String description, TaskStatus status) {
+        this.name = name;
         this.description = description;
         this.status = status;
     }
@@ -15,49 +14,46 @@ public class Task {
         return id;
     }
 
-
     public void setId(int id) {
         this.id = id;
     }
 
-
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
-
 
     public String getDescription() {
         return description;
     }
 
-
     public TaskStatus getStatus() {
         return status;
     }
-
 
     public void setStatus(TaskStatus status) {
         this.status = status;
     }
 
-
     @Override
-    public String toString() {
-        return id + "," + title + "," + status + "," + description;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Task)) return false;
+        Task other = (Task) obj;
+        return id == other.id;
     }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Task)) return false;
-        Task task = (Task) o;
-        return id == task.id;
-    }
-
 
     @Override
     public int hashCode() {
         return Integer.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                '}';
     }
 }

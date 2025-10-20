@@ -1,25 +1,27 @@
 public class Main {
     public static void main(String[] args) {
-        TaskManager taskManager = Managers.getDefault();
+        HistoryManager historyManager = new InMemoryHistoryManager();
+        TaskManager manager = new InMemoryTaskManager(historyManager);
 
-        // Создаем задачи с статусом NEW
-        Task task = new Task("Task 1", "Description of task", TaskStatus.NEW);
-        taskManager.createTask(task);
+        // создаем эпик
+        Epic epic = new Epic("Эпик 1", "Description of epic 1", TaskStatus.NEW);
+        manager.createEpic(epic);  // теперь у эпика есть id
 
-        Epic epic = new Epic("Epic 1", "Description of epic");
-        taskManager.createEpic(epic);
+        int epicId = epic.getId();  // получаем id созданного эпика
 
-        Subtask subtask = new Subtask("Subtask 1", "Description of subtask", TaskStatus.NEW, epic.getId());
-        taskManager.createSubtask(subtask);
+        // создаем подзадачу с прав epicId
+        Subtask subtask = new Subtask("Subtask 1", "Description of subtask 1", TaskStatus.NEW, epicId);
+        manager.createSubtask(subtask);
 
-        // Получаем задачи
-        Task retrievedTask = taskManager.getTask(task.getId());
-        Epic retrievedEpic = taskManager.getEpic(epic.getId());
-        Subtask retrievedSubtask = taskManager.getSubtask(subtask.getId());
+        // проверяем, что epicId у подзадачи установлен норм
+        System.out.println("Epic ID in Subtask: " + subtask.getEpicId());  // Должно вывести id эпика
 
-        // Выводим на экран
-        System.out.println("Retrieved Task: " + retrievedTask);
-        System.out.println("Retrieved Epic: " + retrievedEpic);
+        // получаем и выводим подзадачу из менеджера
+        Subtask retrievedSubtask = manager.getSubtask(subtask.getId());
         System.out.println("Retrieved Subtask: " + retrievedSubtask);
+
+        // получаем и выводим эпик
+        Epic retrievedEpic = manager.getEpic(epicId);
+        System.out.println("Retrieved Epic subtasks count: " + retrievedEpic.getSubtasks().size());
     }
 }
